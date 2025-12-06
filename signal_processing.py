@@ -3,6 +3,7 @@ from signal_processing_utils import Reference as ref
 from signal_processing_utils import AoA_ToF
 from signal_processing_utils import find_Peaks as find_Peaks
 from preprocessing import*
+from AoA_ToF import evaluate_AoA_ToF_methods
 
 
 
@@ -23,7 +24,7 @@ def signal_processing(CSI, args):
         "obj0": (58.79195929697761, 1.2754158439024172e-08),
         "obj1": (115.42867011533676, 1.5593202334168465e-08)
     }
-
+    """
     if ('smoothed' in args.AoA_ToF_methods):
         AoA_ToF.AoA_ToF_estimator(
             CSI,
@@ -65,6 +66,9 @@ def signal_processing(CSI, args):
             temp_smoothed=False,
             ground_truth = ground_truth
         )
+    """
+    evaluate_AoA_ToF_methods(args, CSI, ground_truth)
+    
     # AoA-Doppler settings:
     subcarrier_id = 0
     tx_id = 0

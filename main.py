@@ -67,7 +67,7 @@ if __name__ == '__main__':
     #global config
     parser.add_argument('--time', type = float, default = 3)
     parser.add_argument('--fs', type = float, default = 100)
-    parser.add_argument('--plotted_packet', type = int, default = 120)
+    parser.add_argument('--plotted_packet', type = int, default = 100)
     parser.add_argument('--seed', type=int, default=777)
 
     #signal processing config
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     
     parser.add_argument('--mD_estimation', nargs = "+", default = ['', 'ref', '', '', '', ''])
 
-    parser.add_argument('--AoA_ToF_methods', nargs = "+", default = ['FB_smoothed', 'smoothed_avg', 'smoothed', '', '', '', '', '', '', '', '', '', '']) #['smoothed_avg', 'smoothed', '', '']
+    parser.add_argument('--AoA_ToF_methods', nargs = "+", default = ['smoothed', 'smoothed_avg', 'temp_smoothed', 'FB_smoothed', 'FB_smoothed_avg', 'FB_temp_smoothed']) #['smoothed_avg', 'smoothed', '', '']
     parser.add_argument('--AoA_Doppler_methods', type = str, default = ['', '', '', '', '', '', '']) #['smoothed_avg', 'smoothed', '', '', '','']) 
     parser.add_argument('--projection', default = 'cos')
     #args
