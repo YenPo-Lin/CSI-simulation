@@ -24,49 +24,7 @@ def signal_processing(CSI, args):
         "obj0": (58.79195929697761, 1.2754158439024172e-08),
         "obj1": (115.42867011533676, 1.5593202334168465e-08)
     }
-    """
-    if ('smoothed' in args.AoA_ToF_methods):
-        AoA_ToF.AoA_ToF_estimator(
-            CSI,
-            subc_stride=1,
-            stream_window_size=(args.num_Rx + 2) // 2,
-            subc_window_size=args.num_subcarriers // 2,
-            args=args,
-            ground_truth = ground_truth
-        )
-    if ('smoothed_avg' in args.AoA_ToF_methods):
-        AoA_ToF.AoA_ToF_estimator(
-            CSI,
-            subc_stride=4,
-            stream_window_size=(args.num_Rx + 2) // 2,
-            subc_window_size=args.num_subcarriers // 2,
-            args=args,
-            avg=True,
-            temp_smoothed=False,
-            ground_truth = ground_truth
-        )
-    if ('temp_smoothed' in args.AoA_ToF_methods):
-        AoA_ToF.AoA_ToF_estimator(
-            CSI,
-            subc_stride=1,
-            stream_window_size=(args.num_Rx + 2) // 2,
-            subc_window_size=args.num_subcarriers // 2,
-            args=args,
-            avg = True,
-            temp_smoothed=True,
-            ground_truth = ground_truth
-        )
-    if ('FB_smoothed' in args.AoA_ToF_methods):
-        AoA_ToF.FB_AoA_ToF_estimator(
-            CSI,
-            subc_stride=4,
-            subc_window_size=args.num_subcarriers // 2,
-            args=args,
-            avg=True,
-            temp_smoothed=False,
-            ground_truth = ground_truth
-        )
-    """
+
     evaluate_AoA_ToF_methods(args, CSI, ground_truth)
     
     # AoA-Doppler settings:
