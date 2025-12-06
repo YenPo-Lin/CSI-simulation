@@ -5,10 +5,9 @@ from scipy.ndimage import gaussian_filter, maximum_filter
 
 
 def evaluate_AoA_ToF_methods(args, CSI, ground_truth):
-    # 定義每個方法的參數
     methods = {
         'smoothed':         (AoA_ToF.AoA_ToF_estimator, 1, False, False),
-        'smoothed_avg':     (AoA_ToF.AoA_ToF_estimator, 1, True, False),
+        'smoothed_avg':     (AoA_ToF.AoA_ToF_estimator, 4, True, False),
         'temp_smoothed':    (AoA_ToF.AoA_ToF_estimator, 1, False, True),
         'FB_smoothed':      (AoA_ToF.FB_AoA_ToF_estimator, 1, False, False),
         'FB_smoothed_avg':  (AoA_ToF.FB_AoA_ToF_estimator, 4, True, False),
@@ -37,8 +36,6 @@ def evaluate_AoA_ToF_methods(args, CSI, ground_truth):
                     temp_smoothed=temp_smoothed,
                     ground_truth=ground_truth
                 )
-
-
 
 class find_Peaks:
     def find_AoA_ToF_peaks(P_music, theta, tau, num_peaks=2, sigma=2, neighborhood_size=5, threshold=0.3):

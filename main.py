@@ -77,7 +77,7 @@ if __name__ == '__main__':
     parser.add_argument('--mD_estimation', nargs = "+", default = ['', 'ref', '', '', '', ''])
 
     parser.add_argument('--AoA_ToF_methods', nargs = "+", default = ['smoothed', 'smoothed_avg', 'temp_smoothed', 'FB_smoothed', 'FB_smoothed_avg', 'FB_temp_smoothed']) #['smoothed_avg', 'smoothed', '', '']
-    parser.add_argument('--AoA_Doppler_methods', type = str, default = ['', '', '', '', '', '', '']) #['smoothed_avg', 'smoothed', '', '', '','']) 
+    parser.add_argument('--AoA_Doppler_methods', type = str, default = ['MUSIC', 'smoothed', 'smoothed_avg', 'Beamform', 'Beamform_avg', '', '']) #['smoothed_avg', 'smoothed', '', '', '','']) 
     parser.add_argument('--projection', default = 'cos')
     #args
     args = parser.parse_args()
@@ -111,19 +111,6 @@ if __name__ == '__main__':
     STFT_setting['nfft'] = int(STFT_setting['return_features'] / (2 * STFT_setting['focus_freq'] + 1) * args.fs)
     #print("STFT settings --- nfft: {}, nperseg: {}, noverlap: {}, return_features: {}".format(STFT_setting['nfft'], STFT_setting['nperseg'], STFT_setting['noverlap'], STFT_setting['return_features']))
 
-    # information
-    """
-    print("===== WiFi Settings =====")
-    for k in ['num_Tx', 'num_Rx', 'num_frames', 'num_subcarriers']:
-        print(f"{k:<18}: {getattr(args, k)}")
-
-    print("\n===== STFT Settings =====")
-    for k in ['nfft', 'nperseg', 'noverlap', 'return_features']:
-        print(f"{k:<18}: {STFT_setting[k]}")
-    """
-
-
-
     # load
     datapath = "CSI_original.npz"
     #datapath = "CSI_remove_phase_offset.npz"
@@ -138,7 +125,6 @@ if __name__ == '__main__':
 
     for i in range(1):
         signal_processing(x, args)
-
     end_time = time.time()
 
     print(f"{'Time':<18}: {end_time - start_time}")

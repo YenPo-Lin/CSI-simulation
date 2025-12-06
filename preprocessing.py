@@ -6,9 +6,6 @@ import matplotlib.pyplot as plt
 def show_preprocessing(csi, args):
     CSI_amp = np.abs(csi)
     CSI_phase = np.angle(csi)
-
-
-
     pha_methods = []
     pha_method_names = []
 
@@ -393,30 +390,3 @@ class Amp_sanitize:
         window = np.ones(window_size) / window_size
         
         return np.apply_along_axis(lambda m: np.convolve(m, window, mode='same'), axis=0, arr=csi_amp)
-
-        """
-        Gain estimation for uniformly-spaced G (Eq.16–18)
-        delta_db : ACG level等距增益間隔 (dB)
-        Trep     : frame 間隔 (秒)
-        """
-        # Step 1: 每幀平均功率 (dB)
-        Gamma = 10 * np.log10(np.mean(np.abs(csi_amp)**2, axis=-1))  # shape = (T, Tx, Rx)
-        T, Tx, Rx = Gamma.shape
-        g_hat = np.zeros((T, Tx, Rx))
-
-        for tx in range(Tx):
-            for rx in range(Rx):
-                # Step 2: 時間平滑 (低通成分 g1)
-                window = int(max(1, round(1/(Trep*10))))  # 約0.1 Hz cutoff
-                g1 = np.convolve(Gamma[:, tx, rx],
-                                np.ones(window)/window, mode='same')
-
-                # Step 3: 離散化為等距格點 (ΔG)
-                g2_continuous = Gamma[:, tx, rx] - g1
-                g2_uniform = np.round(g2_continuous / delta_db) * delta_db
-
-                # Step 4: 組合並轉回線性尺度
-                g_hat[:, tx, rx] = 10 ** ((g1 + g2_uniform) / 20)
-
-        g_hat = g_hat[..., None]
-        return csi_amp / g_hat
