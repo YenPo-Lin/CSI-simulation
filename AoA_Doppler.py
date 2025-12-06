@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.ndimage import gaussian_filter, maximum_filter
 
 # AoA-Doppler settings:
 subcarrier_id = 0
@@ -64,8 +63,6 @@ def evaluate_AoA_Doppler_methods(args, CSI):
         f, theta, P_music = ref.cal_AoA_Doppler_beamform(sampled_CSIs, args=args)
         P_music = np.flipud(P_music)
         ref.plot_AoA_Doppler(f, theta, P_music, title = "(beamform subc-avg)")
-
-
 
 class find_Peaks:
 
@@ -149,7 +146,6 @@ class find_Peaks:
             for i, j, val in peaks
         ]
         return peaks_info
-
 
 class ref:
     def sampled_CSI_AoA_Doppler(CSI, args, tx_id = 0,subcarrier_id = 0): 
