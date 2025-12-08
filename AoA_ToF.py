@@ -18,8 +18,8 @@ def evaluate_AoA_ToF_methods(args, CSI, ground_truth):
             if estimator == AoA_ToF.AoA_ToF_estimator:
                 estimator(
                     CSI,
-                    subc_stride=subc_stride,
-                    stream_window_size=(args.num_Rx + 2) // 2,
+                    subc_stride=subc_stride, #4
+                    stream_window_size=(args.num_Rx + 2) // 2, #256
                     subc_window_size=args.num_subcarriers // 2,
                     args=args,
                     avg=avg,
@@ -29,7 +29,7 @@ def evaluate_AoA_ToF_methods(args, CSI, ground_truth):
             elif estimator == AoA_ToF.FB_AoA_ToF_estimator:
                 estimator(
                     CSI,
-                    subc_stride=subc_stride,
+                    subc_stride=subc_stride, 
                     subc_window_size=args.num_subcarriers // 2,
                     args=args,
                     avg=avg,
@@ -105,9 +105,9 @@ class AoA_ToF:
             smoothed_CSI = AoA_ToF.smoothed_csi(
                 CSI[args.plotted_packet], 
                 args, 
-                stream_window_size, 
-                subc_window_size, 
-                subc_stride
+                stream_window_size, #3
+                subc_window_size, #256
+                subc_stride #4
                 )
             print(f"[smoothed], shape={smoothed_CSI.shape}")
         input = (temp_smoothed_CSIs if temp_smoothed else smoothed_CSIs if avg else smoothed_CSI)
@@ -133,7 +133,7 @@ class AoA_ToF:
         Build Toeplitz-like smoothed CSI for AoA–ToF. (Use Tx=0)
         """
         # block_size = num_subc_per_block
-        block_size = subc_window_size // subc_stride
+        block_size = subc_window_size // subc_stride #256//4 =64(64*64)
 
         H_list = []
         for r in range(args.num_Rx):
@@ -155,8 +155,9 @@ class AoA_ToF:
         return smoothed_csi
 
     def cal_AoA_ToF(x, args, stream_window_size, subc_window_size, subc_stride=1):
-        #print("smoothed shape:", x.shape)
-        # Covariance matrix
+
+
+        #step1. Covariance matrix
         if len(x.shape) == 2:
             x = np.asarray(x, dtype=complex)
             S = x @ x.conj().T
@@ -167,12 +168,22 @@ class AoA_ToF:
                 S += temp_x @ temp_x.conj().T
             S = S / x.shape[0]
 
-        # Eigen decomposition
+        #step2. Eigen decomposition
         eig_val, eig_vec = np.linalg.eigh(S)
         eig_vec = eig_vec.astype(complex)
         idx_order = eig_val.argsort()[::-1]
         eig_val = eig_val[idx_order]
         eig_vec = eig_vec[:, idx_order]
+
+        eig_val_db = 10 * np.log10(eig_val / np.max(eig_val))
+        '''
+        plt.figure()
+        plt.plot(idx_order, eig_val_db, marker='o')
+        plt.xlabel('Eigenvalue index (sorted)')
+        plt.ylabel('Eigenvalue (dB, normalized)')
+        plt.title('Eigenvalue Spectrum in dB')
+        plt.grid(True)
+        '''
 
         # Noise subspace
         Sdim = 11
@@ -183,7 +194,7 @@ class AoA_ToF:
         # theta candidate
         theta = np.arange(0, 360) if args.projection=='sin' else np.arange(0, 180)
         # tau candidate
-        tau = np.arange(0.2*1e-8, 3.3*1e-8, 5e-10) #620 points
+        tau = np.arange(0.2*1e-8, 3.3*1e-8, 5e-10) #62 points
 
         # steering_vector length:
         sv_len = stream_window_size * (subc_window_size // subc_stride)
@@ -232,16 +243,16 @@ class AoA_ToF:
         # ----------------------
         # Subcarrier (ToF + carrier) phase
         # ----------------------
-        row_size = subc_window_size // subc_stride  # number of subcarriers after stride
-        sub_idx = np.arange(0, row_size) * subc_stride   # indices of selected subcarriers
+        row_size = subc_window_size // subc_stride  # number of subcarriers after stride #256//4=64
+        sub_idx = np.arange(0, row_size) * subc_stride   # indices of selected subcarriers #64*8=512
 
         # carrier delay
         const_phase = np.exp(-2j * np.pi * fc * tau_j)
         # subcarrier frequency phase
-        exp_omega = const_phase * np.exp(-2j * np.pi * delta_f * tau_j * sub_idx)
+        exp_omega = const_phase * np.exp(-2j * np.pi * delta_f * tau_j * sub_idx) #192
 
         # ----------------------
-        # Spatial phase (AoA)
+        # Spatial phase (AoA) #3
         # ----------------------
         if args.projection == "sin":
             exp_phi = np.exp(+2j * np.pi * fc * np.sin(theta_i) * args.d / 3e8 * np.arange(stream_window_size))
@@ -251,7 +262,8 @@ class AoA_ToF:
         # ----------------------
         # Steering vector = Kronecker of spatial and subcarrier vectors
         # ----------------------
-        steering_vector = np.kron(exp_phi, exp_omega)
+        steering_vector = np.kron(exp_phi, exp_omega) #3*512=1536
+        #print(f"Steering vector shape: {steering_vector.shape}")
         return steering_vector.flatten()
 
     def plot_AoA_ToF(tau, theta, P_music, title="", ground_truth={}):

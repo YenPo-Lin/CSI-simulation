@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # AoA-Doppler settings:
 subcarrier_id = 0
 tx_id = 0
-npersub = 30
+npersub = 3
 
 def evaluate_AoA_Doppler_methods(args, CSI):
 
@@ -220,8 +220,6 @@ class ref:
 
         theta_i = np.deg2rad(theta_i) 
 
-        #vector exp_phi (AoA term)
-        #[ 1, e^jφ, e^j2φ, e^j3φ, ...e^j(Nstream -1)φ ]
         if args.projection == "sin":
             exp_phi = np.exp( -2j * np.pi * args.f_0 * np.sin(theta_i) * args.d / 3e8 * np.arange(args.num_Rx))
         elif args.projection == "cos":  
@@ -229,12 +227,7 @@ class ref:
         #vector exp_phi (doppler term)
         #[ 1, e^jω, e^j2ω, e^j3ω, ...e^j(Nstream * Nsubc -1)φ ]
         exp_omega = np.exp(1j * 2 * np.pi * np.arange(0, args.nperseg) * f_j / args.fs)
-        #steering vector
-        #[ 1     * [1, e^jω, e^j2ω, e^j3ω, ...e^j(num_subcarriers-1)ω] ]
-        #| e^jφ  * [1, e^jω, e^j2ω, e^j3ω, ...e^j(num_subcarriers-1)ω] |
-        #[ e^j2φ * [1, e^jω, e^j2ω, e^j3ω, ...e^j(num_subcarriers-1)ω] ]Nstream x (Nstream*Nsubc)
         steering_vector = np.kron(exp_phi, exp_omega)
-        #reshape to 1D array
         return steering_vector.reshape(-1, 1)
 
     def smooth_CSI_AoA_f_doppler(CSI, args):
@@ -309,7 +302,7 @@ class ref:
             theta = np.arange(0, 180, 1)
         
         # doppler frequency candidate
-        freqs = np.arange(-30, 80, 1)
+        freqs = np.arange(-40, 40, 1)
         
         # calculate P_music
         #P_music(freq, theta) = 1/a^H E_n E_n^H a
@@ -434,7 +427,7 @@ class ref:
 
         if args.projection == "sin": theta = np.arange(-90, 91)
         elif args.projection == "cos": theta = np.arange(0, 181)
-        freqs = np.arange(-25, 70)
+        freqs = np.arange(-40, 40)
         
         P_mvdr = np.zeros([theta.shape[0], freqs.shape[0]])
 

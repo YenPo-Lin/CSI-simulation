@@ -77,7 +77,7 @@ if __name__ == '__main__':
     parser.add_argument('--mD_estimation', nargs = "+", default = ['', 'ref', '', '', '', ''])
 
     parser.add_argument('--AoA_ToF_methods', nargs = "+", default = ['smoothed', 'smoothed_avg', 'temp_smoothed', 'FB_smoothed', 'FB_smoothed_avg', 'FB_temp_smoothed']) #['smoothed_avg', 'smoothed', '', '']
-    parser.add_argument('--AoA_Doppler_methods', type = str, default = ['MUSIC', 'smoothed', 'smoothed_avg', 'Beamform', 'Beamform_avg', '', '']) #['smoothed_avg', 'smoothed', '', '', '','']) 
+    parser.add_argument('--AoA_Doppler_methods', type = str, default = ['MUSIC', 'smoothed', 'Beamform', 'smoothed_avg', '', '']) #['smoothed_avg', 'smoothed', '', '', '','']) 
     parser.add_argument('--projection', default = 'cos')
     #args
     args = parser.parse_args()
