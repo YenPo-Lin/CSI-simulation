@@ -134,7 +134,7 @@ class AoA_ToF:
         """
         # block_size = num_subc_per_block
         block_size = subc_window_size // subc_stride #256//4 =64(64*64)
-
+        #32//4 = 8 (8*8: block size for each stream)
         H_list = []
         for r in range(args.num_Rx):
             H = np.zeros((block_size, block_size), dtype=complex)
@@ -243,13 +243,13 @@ class AoA_ToF:
         # ----------------------
         # Subcarrier (ToF + carrier) phase
         # ----------------------
-        row_size = subc_window_size // subc_stride  # number of subcarriers after stride #256//4=64
-        sub_idx = np.arange(0, row_size) * subc_stride   # indices of selected subcarriers #64*8=512
+        row_size = subc_window_size // subc_stride #256//4=64
+        sub_idx = np.arange(0, row_size) * subc_stride  #[0 4 8 ... 252] 64 points
 
         # carrier delay
         const_phase = np.exp(-2j * np.pi * fc * tau_j)
         # subcarrier frequency phase
-        exp_omega = const_phase * np.exp(-2j * np.pi * delta_f * tau_j * sub_idx) #192
+        exp_omega = const_phase * np.exp(-2j * np.pi * delta_f * tau_j * sub_idx) #64 points
 
         # ----------------------
         # Spatial phase (AoA) #3
@@ -262,7 +262,7 @@ class AoA_ToF:
         # ----------------------
         # Steering vector = Kronecker of spatial and subcarrier vectors
         # ----------------------
-        steering_vector = np.kron(exp_phi, exp_omega) #3*512=1536
+        steering_vector = np.kron(exp_phi, exp_omega) #3*64=192
         #print(f"Steering vector shape: {steering_vector.shape}")
         return steering_vector.flatten()
 

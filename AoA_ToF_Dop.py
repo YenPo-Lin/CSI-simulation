@@ -169,8 +169,6 @@ class AoA_ToF_Doppler:
         return theta, tau, freqs, P_aoa_tof_w
 
 
-
-
     def sampled_AoA_ToF_Dop(CSI, args, stream_window_size,subc_window_size, subc_stride, nperseg):
         print("Sampling AoA-ToF-Doppler spectrum using MUSIC...")
         if args.plotted_packet + args.nperseg > args.num_frames:

@@ -24,9 +24,10 @@ def signal_processing(CSI, args):
         "obj1": (115.42867011533676, 1.5593202334168465e-08)
     }
 
-    if 0: evaluate_AoA_ToF_methods(args, CSI, ground_truth)
+    if 1: evaluate_AoA_ToF_methods(args, CSI, ground_truth)
     
     # AoA-Doppler settings:
     if 0: evaluate_AoA_Doppler_methods(args, CSI)
-    if 1:evaluate_AoA_Tof_Doppler_methods(args, CSI)
+    
+    if 0:evaluate_AoA_Tof_Doppler_methods(args, CSI)
     

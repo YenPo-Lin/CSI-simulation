@@ -112,7 +112,7 @@ if __name__ == '__main__':
     #print("STFT settings --- nfft: {}, nperseg: {}, noverlap: {}, return_features: {}".format(STFT_setting['nfft'], STFT_setting['nperseg'], STFT_setting['noverlap'], STFT_setting['return_features']))
 
     # load
-    datapath = "CSI_original.npz"
+    datapath = "CSI_from_Dop.npz"
     #datapath = "CSI_remove_phase_offset.npz"
     data = np.load(datapath)
     raw_CSIs = data["arr_0"]
